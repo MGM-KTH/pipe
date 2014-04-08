@@ -1,5 +1,5 @@
 all:
-	gcc -Wall pipe.c -o pipe
+	gcc -Wall digenv.c -o digenv
 
 clean:
 	rm -rf *.o
