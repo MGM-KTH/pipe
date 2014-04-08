@@ -1,4 +1,5 @@
 git status
+echo    # (optional) move to a new line
 read -p "Commit digenv.c with the commit message '$1'? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
