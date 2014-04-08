@@ -8,7 +8,7 @@ int main(int argc, char **argv, char **envp) {
     // We can read env. vars. with "getenv(const char* name)"
 
 	int i;
-	for(i = 0; envp[i] != NULL; ++i) {
+	for (i = 0; envp[i] != NULL; ++i) {
 		printf("%2d:%s\n", i, envp[i]);
 	}
 	return 0;
