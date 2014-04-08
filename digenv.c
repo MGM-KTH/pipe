@@ -1,3 +1,10 @@
+/*
+ * Digenv
+ *
+ * @author: Gustaf Lindstedt
+ * @author: Martin Runelöv
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
