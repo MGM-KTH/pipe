@@ -1,3 +1,6 @@
+# Executable
+pipe
+
 # Object files
 *.o
 *.ko
