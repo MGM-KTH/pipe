@@ -31,7 +31,7 @@ void kill_handler(int signal_code) {
 }
 
 int main() {
-    register_sighandler(SIGINT, kill_handler);
+    register_sighandler(SIGKILL, kill_handler);
     int a = 0;
     while(1) {
         ++a;
