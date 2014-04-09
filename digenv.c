@@ -1,5 +1,11 @@
 /*
- * Digenv
+ * 
+ * Digenv - Dig (search) for environment variables
+ *
+ * Without parameters the program corresponds to "printenv | sort | less".
+ * the pager used (default: less) is set by the environment variable PAGER.
+ * 
+ *
  *
  * @author: Gustaf Lindstedt
  * @author: Martin Runelöv
@@ -12,6 +18,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+/*
+ * Register a signal handler
+ */
 void register_sighandler( int signal_code, void (*handler) (int sig) )  {
     int retval;
 
@@ -31,9 +40,10 @@ void register_sighandler( int signal_code, void (*handler) (int sig) )  {
 
 int main(int argc, char **argv, char **envp) {
 
-    /* no parameters corresponds to "printenv | sort | less".
-     * the pager used (default: less) is set by the env. var. PAGER.
-     * We can read env. vars. with "getenv(const char* name)"
+    /* 
+     * We can read env. vars. with "getenv(const char* name)" 
+     * e.g. getenv("PAGER"). If 0, use less (?)
+     * execvp("grep",argv) ? something like that...
      */
 
 	int i;
