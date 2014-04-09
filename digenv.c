@@ -21,6 +21,12 @@
 #include <sys/types.h>
 #include <wait.h>
 
+#define READ 0
+#define WRITE 1
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+
 void close_pipe(int pipe[2]);
 
 /*
@@ -83,7 +89,7 @@ int main(int argc, char **argv, char **envp) {
 		/*
  		 * Overwrite 
  		 */
-		retval = dup2(pipe_desc[0], 0);
+		retval = dup2(pipe_desc[READ], STDIN);
 		if(-1 == retval) {
 			fprintf(stderr, "error copying file descriptor to stdin\n");
 			exit(1);
@@ -124,7 +130,7 @@ int main(int argc, char **argv, char **envp) {
 		}
 
 		/*
-		retval = dup2(pipe_desc[1], 1);
+		retval = dup2(pipe_desc[WRITE], 1);
 		if(-1 == retval) {
 			fprintf(stderr, "error copying file descriptor to stdout\n");
 			exit(1);
@@ -133,7 +139,7 @@ int main(int argc, char **argv, char **envp) {
 
 		close_pipe(pipe_desc);
 
-		waitpid(child_pid, &status, 0);
+		waitpid(child_pid, &status, 0); // 0: No options
 
 		exit(0);
 	}
@@ -146,12 +152,12 @@ int main(int argc, char **argv, char **envp) {
  */
 void close_pipe(int pipe[2]) {
 	int retval;
-	retval = close(pipe[0]);
+	retval = close(pipe[READ]);
 	if(-1 == retval) {
 		fprintf(stderr, "error closing pipe\n");
 		exit(1);
 	}
-	retval = close(pipe[1]);
+	retval = close(pipe[WRITE]);
 	if(-1 == retval) {
 		fprintf(stderr, "error closing\n");
 		exit(1);
