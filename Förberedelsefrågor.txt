@@ -9,20 +9,27 @@ Tips: Kommandot ps -el (SysV) eller ps -aux (BSD) ger en lista med mycket inform
 
 2. Kan environmentvariabler användas för att kommunicera mellan föräldra- och barnprocess? åt bägge hållen?
 
-- Ja. Båda kan läsa och skriva till dessa. (Det är dock inte ett vanligt sätt att kommunicera på???? Låter jävligt skumt)
+- Child-processer får en kopia av parent-processens environmentvariabler. Detta innebär att en parent kan bestämma startvärdena för children.
+Ändringar i child-processens variabler ändrar inte parent-variabler, och därför kan inte child-processer kommunicera till parent via dessa.
 
 
 
 3. Man kan tänka sig att skapa en odödlig child-process som fångar alla SIGKILL-signaler genom att registrera en egen signalhanterare kill_handler som bara struntar i SIGKILL. Processen ska förstås ligga i en oändlig loop då den inte exekverar signalhanteraren. Testa! Skriv ett program med en sådan signalhanterare, kompilera och provkör. Vad händer? Läs mer i manualtexten om sigaction för att förklara resultatet.
 
+- Det är inte tillåtet att fånga SIGKILL då detta skulle vara en säkerhetsrisk. Det går däremot att fånga SIGINT.
+Resultat av ett program som försöker registrera en signalhanterare för SIGKILL:
+
 - sigaction() failed: Invalid argument
-From the man file for sigaction:
+
+Från man-filen för sigaction:
+
 ERRORS
      The sigaction() system call will fail and no new signal handler will be
      installed if one of the following occurs:
-    
+
      [EINVAL]           An attempt is made to ignore or supply a handler for
                         SIGKILL or SIGSTOP.
+
 
 
 4. Varför returnerar fork 0 till child-processen och child-PID till parent-processen, i stället för tvärtom?
@@ -33,28 +40,29 @@ men det enda sättet för en parent-process att hålla reda på sina child-proce
 
 5. UNIX håller flera nivåer av tabeller för öppna filer, både en användarspecifik “File Descriptor Table” och en global “File Table”. Behövs egentligen File Table? Kan man ha offset i File Descriptor Table istället?
 
-- Nej, "File Table" behövs. Bla bla bla
+- Nej, "File Table" behövs. Förutom offsets håller den reda på "access mode" (t.ex. read/write) samt antalet "File Descriptor Table"-entries som pekar på den.
+(Denna mellanhand är användbar för "In-memory inode table", som inte har dubletter. Bara om en fil vill öppna en för nuvarande stängd fil skapas ett entry.)
 
 
 
-6. Kan man strunta i att stänga en pipe om man inte använder den? Hur skulle programbeteendet påverkas? Testa själv. 
+6. Kan man strunta i att stänga en pipe om man inte använder den? Hur skulle programbeteendet påverkas? Testa själv.
 Läs mer i pipe(2).
 
-- ????
+- Nej. Read-änden av pipen får EOF när pipen stängs. Utan detta blockeras programmet vid läsningen från pipen.
 
 
 
 7. Vad händer om en av processerna plötsligt dör? Kan den andra processen upptäcka detta?
 
-- ????
+- Parent-processen kan få exit-status av sina children via wait(&status).
 
 
 
 8. Hur kan du i ditt program ta reda på om grep misslyckades? Dvs om grep inte hittade någon förekomst av det den skulle söka efter eller om du gett felaktiga parametrar till grep?
 
+Från man-filen:
+
 Grep will return:
     0     One or more lines were selected.
     1     No lines were selected.
     >1    An error occurred.
-
-
