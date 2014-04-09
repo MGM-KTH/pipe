@@ -27,6 +27,7 @@
 #define STDOUT 1
 #define STDERR 2
 
+void apply_pipe(int pipe[2], int pfd, int fd);
 void close_pipe(int pipe[2]);
 void register_sighandler(int signal_code, void (*handler) (int sig));
 
@@ -79,47 +80,27 @@ int main(int argc, char **argv, char **envp) {
 	*/
 
 	retval = pipe(pipe_desc);
+	if(-1 == retval) {
+		fprintf(stderr, "error opening pipe\n");
+		exit(1);
+	}
 
 	child_pid = fork();
 
 	if(0 == child_pid) {
-		/*char buf[512];*/
 
 		fprintf(stderr, "child reporting in for duty with pid %d\n", getpid());
 
-		/*
- 		 * Overwrite 
- 		 */
-		retval = dup2(pipe_desc[READ], STDIN);
-		if(-1 == retval) {
-			fprintf(stderr, "error copying file descriptor to stdin\n");
-			exit(1);
-		}
-		fprintf(stderr, "child duplicated pipe\n");
+		apply_pipe(pipe_desc, WRITE, STDIN);
 
 		close_pipe(pipe_desc);
 
 		fprintf(stderr, "child closed pipe\n");
 
-		/*
-		retval = read(0, buf, sizeof(buf)/sizeof(char));
-		if(-1 == retval) {
-			fprintf(stderr, "error reading from stdin\n");
-			exit(1);
-		}
-		*/
-
 		fprintf(stderr, "child executing printenv...\n");
 		
 		execvp("printenv", argv);
 
-		/*
-		retval = write(1, buf, retval);
-		if(-1 == retval) {
-			fprintf(stderr, "error writing to stdout\n");
-			exit(1);
-		}
-		*/
 		exit(0);
 		
 	}else{
@@ -146,6 +127,30 @@ int main(int argc, char **argv, char **envp) {
 	}
 
 	return 0;
+}
+
+void printenv() {
+}
+
+void grep() {
+}
+
+void sort() {
+}
+
+void less() {
+}
+
+/*
+ * Apply the pipe file descriptors to STDIN and STDOUT
+ */
+void apply_pipe(int pipe[2], int pfd, int fd) {
+	int retval;
+	retval = dup2(pipe[pfd], fd);
+	if(-1 == retval) {
+		fprintf(stderr, "error copying file descriptor to stdin\n");
+		exit(1);
+	}
 }
 
 /*
