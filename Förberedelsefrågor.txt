@@ -1,0 +1,41 @@
+Förberedelsefrågor
+
+
+1. När en maskin bootar med UNIX skapas en process som har PID=1 och den lever så länge maskinen är uppe. Från den här processen skapas alla andra processer med fork. Vad heter denna process?
+Tips: Kommandot ps -el (SysV) eller ps -aux (BSD) ger en lista med mycket information om alla processer i systemet.
+
+
+
+
+2. Kan environmentvariabler användas för att kommunicera mellan föräldra- och barnprocess? åt bägge hållen?
+
+
+
+
+3. Man kan tänka sig att skapa en odödlig child-process som fångar alla SIGKILL-signaler genom att registrera en egen signalhanterare kill_handler som bara struntar i SIGKILL. Pro- cessen ska förstås ligga i en oändlig loop då den inte exekverar signalhanteraren. Testa! Skriv ett programmet med en sådan signalhanterare, kompilera och provkör. Vad händer? Läs mer i manualtexten om sigaction för att förklara resultatet.
+
+
+
+
+4. Varför returnerar fork 0 till child-processen och child-PID till parent-processen, i stället för tvärtom?
+
+
+
+
+5. UNIX håller flera nivåer av tabeller för öppna filer, både en användarspecifik “File Descriptor Table” och en global “File Table”. Behövs egentligen File Table? Kan man ha offset i File Des- criptor Table istället?
+
+
+
+
+6. Kan man strunta i att stänga en pipe om man inte använder den? Hur skulle programbeteendet påverkas? Testa själv. 
+Läs mer i pipe(2).
+
+
+
+
+7. Vad händer om en av processerna plötsligt dör? Kan den andra processen upptäcka detta?
+
+
+
+
+8. Hur kan du i ditt program ta reda på om grep misslyckades? Dvs om grep inte hittade någon förekomst av det den skulle söka efter eller om du gett felaktiga parametrar till grep?
