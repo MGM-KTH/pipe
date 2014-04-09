@@ -28,6 +28,7 @@
 #define STDERR 2
 
 void close_pipe(int pipe[2]);
+void register_sighandler(int signal_code, void (*handler) (int sig));
 
 /*
  * Register a signal handler
