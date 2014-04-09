@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <wait.h>
 
 void close_pipe(int pipe[2]);
 
@@ -58,8 +59,9 @@ int main(int argc, char **argv, char **envp) {
 	 */
 
 	/*int i;*/
-	int retval, child_pid;
+	int retval;
 	int pipe_desc[2];
+	pid_t child_pid;
 
 	/*
 	for (i = 0; envp[i] != NULL; ++i) {
@@ -72,50 +74,64 @@ int main(int argc, char **argv, char **envp) {
 	child_pid = fork();
 
 	if(0 == child_pid) {
-		char buf[512];
+		/*char buf[512];*/
 
 		fprintf(stderr, "child reporting in for duty with pid %d\n", getpid());
 
+		/*
+ 		 * Overwrite 
+ 		 */
 		retval = dup2(pipe_desc[0], 0);
 		if(-1 == retval) {
 			fprintf(stderr, "error copying file descriptor to stdin\n");
 			exit(1);
 		}
+		fprintf(stderr, "child duplicated pipe\n");
 
 		close_pipe(pipe_desc);
 
+		fprintf(stderr, "child closed pipe\n");
+
+		/*
 		retval = read(0, buf, sizeof(buf)/sizeof(char));
 		if(-1 == retval) {
 			fprintf(stderr, "error reading from stdin\n");
 			exit(1);
 		}
-		
-		sleep(2);
+		*/
 
+		fprintf(stderr, "child executing printenv...\n");
+		
+		execvp("printenv", argv);
+
+		/*
 		retval = write(1, buf, retval);
 		if(-1 == retval) {
 			fprintf(stderr, "error writing to stdout\n");
 			exit(1);
 		}
-
+		*/
 		exit(0);
 		
 	}else{
+		int status;
+
 		if(-1 == child_pid) {
 			perror("fork() failed!\n");
 			exit(1);
 		}
 
+		/*
 		retval = dup2(pipe_desc[1], 1);
 		if(-1 == retval) {
 			fprintf(stderr, "error copying file descriptor to stdout\n");
 			exit(1);
 		}
+		*/
 
 		close_pipe(pipe_desc);
 
-		fprintf(stdout, "Message to child from parent\n");
-		fprintf(stderr, "Parent exiting...\n");
+		waitpid(child_pid, &status, 0);
 
 		exit(0);
 	}
@@ -123,6 +139,9 @@ int main(int argc, char **argv, char **envp) {
 	return 0;
 }
 
+/*
+ * Close the file descriptors in the pipe
+ */
 void close_pipe(int pipe[2]) {
 	int retval;
 	retval = close(pipe[0]);
