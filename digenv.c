@@ -46,6 +46,15 @@ int main(int argc, char **argv, char **envp) {
      * execvp("grep",argv) ? something like that...
      */
 
+     /*
+      * Grep will return:
+      *
+      *  0     One or more lines were selected.
+      *  1     No lines were selected.
+      *  >1    An error occurred.
+      *
+      */
+
 	int i;
 	for (i = 0; envp[i] != NULL; ++i) {
 		printf("%2d:%s\n", i, envp[i]);
