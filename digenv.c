@@ -18,6 +18,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+void close_pipe(int pipe[2]);
+
 /*
  * Register a signal handler
  */
@@ -74,21 +76,13 @@ int main(int argc, char **argv, char **envp) {
 
 		fprintf(stderr, "child reporting in for duty with pid %d\n", getpid());
 
-		retval = close(pipe_desc[1]);
-		if(-1 == retval) {
-			fprintf(stderr, "error closing write buffer of pipe\n");
-			exit(1);
-		}
 		retval = dup2(pipe_desc[0], 0);
 		if(-1 == retval) {
 			fprintf(stderr, "error copying file descriptor to stdin\n");
 			exit(1);
 		}
-		retval = close(pipe_desc[0]);
-		if(-1 == retval) {
-			fprintf(stderr, "error closing pipe in child\n");
-			exit(1);
-		}
+
+		close_pipe(pipe_desc);
 
 		retval = read(0, buf, sizeof(buf)/sizeof(char));
 		if(-1 == retval) {
@@ -111,21 +105,14 @@ int main(int argc, char **argv, char **envp) {
 			perror("fork() failed!\n");
 			exit(1);
 		}
-		retval = close(pipe_desc[0]);
-		if(-1 == retval) {
-			fprintf(stderr, "error closing pipe in parent\n");
-			exit(1);
-		}
+
 		retval = dup2(pipe_desc[1], 1);
 		if(-1 == retval) {
 			fprintf(stderr, "error copying file descriptor to stdout\n");
 			exit(1);
 		}
-		retval = close(pipe_desc[1]);
-		if(-1 == retval) {
-			fprintf(stderr, "error closing pipe in parent\n");
-			exit(1);
-		}
+
+		close_pipe(pipe_desc);
 
 		fprintf(stdout, "Message to child from parent\n");
 		fprintf(stderr, "Parent exiting...\n");
@@ -134,4 +121,18 @@ int main(int argc, char **argv, char **envp) {
 	}
 
 	return 0;
+}
+
+void close_pipe(int pipe[2]) {
+	int retval;
+	retval = close(pipe[0]);
+	if(-1 == retval) {
+		fprintf(stderr, "error closing pipe\n");
+		exit(1);
+	}
+	retval = close(pipe[1]);
+	if(-1 == retval) {
+		fprintf(stderr, "error closing\n");
+		exit(1);
+	}
 }
