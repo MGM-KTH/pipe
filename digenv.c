@@ -1,11 +1,13 @@
 /*
+ * NAME
+ *     Digenv - Dig (search) for environment variables
  *
- * Digenv - Dig (search) for environment variables
+ * DESCRIPTION
+ *     Without parameters the program corresponds to "printenv | sort | less".
+ *     the pager used (default: less) is set by the environment variable PAGER.
  *
- * Without parameters the program corresponds to "printenv | sort | less".
- * the pager used (default: less) is set by the environment variable PAGER.
- *
- *
+ * SEE ALSO
+ *     printenv(1), grep(1), sort(1), less(1)
  *
  * @author: Gustaf Lindstedt
  * @author: Martin Runelöv
