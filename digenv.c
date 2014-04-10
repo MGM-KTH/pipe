@@ -29,12 +29,13 @@
 
 void apply_pipe(int pipe[2], int pfd, int fd);
 void close_pipe(int pipe[2]);
+void pipe_through();
 void register_sighandler(int signal_code, void (*handler) (int sig));
-void create_child(int argc, char **argv, int pipe_desc[2], void (*next_command) (int nargc, char **nargv));
-void printenv();
-void grep();
-void sort();
-void less();
+void create_child(int argc, char **argv, void (*commands[]) (int nargc, char **nargv), int cmd_counter);
+void printenv(int argc, char **argv);
+void grep(int argc, char **argv);
+void sort(int argc, char **argv);
+void less(int argc, char **argv);
 
 /*
  * Register a signal handler
@@ -80,23 +81,53 @@ int main(int argc, char **argv, char **envp) {
 	}
 	*/
 
-	int retval;
-	int pipe_desc[2];
+	int cmds = 4;
+	/*int pipe_desc[2];*/
+	/*
+	 * An array of function pointers (void*)
+	 */
+	void (*commands[cmds]) (int nargc, char**nargv);
+	commands[0] = printenv;
+	commands[1] = grep;
+	commands[2] = sort;
+	commands[3] = less;
 
 
+	/*
 	retval = pipe(pipe_desc);
 	if(-1 == retval) {
 		fprintf(stderr, "error opening pipe\n");
 		exit(1);
 	}
+	*/
+	/*
+	 * Special pipe since it is from the root parent, we want the child to output to STDOUT
+	 */
+	/*pipe_desc[WRITE] = STDOUT;*/
 
-	create_child(argc, argv, pipe_desc, (void*)printenv);
+	/*
+	 * Pipe is closed within create_child
+	 */
+	create_child(argc, argv, commands, cmds);
+
+	pipe_through();
 
 	return 0;
 }
 
-void create_child(int argc, char **argv, int pipe_desc[2], void (*next_command) (int nargc, char **nargv)) {
+/*
+ * Functions are executed in reverse order, starting from cmd_counter until it hits 0
+ */
+void create_child(int argc, char **argv, void (*commands[]) (int nargc, char **nargv), int cmd_counter) {
 	pid_t child_pid;
+	int retval;
+	int pipe_desc[2];
+
+	retval = pipe(pipe_desc);
+	if(-1 == retval) {
+		perror("error opening pipe\n");
+		exit(1);
+	}
 
 	child_pid = fork();
 
@@ -104,7 +135,10 @@ void create_child(int argc, char **argv, int pipe_desc[2], void (*next_command) 
 
 		fprintf(stderr, "child reporting in for duty with pid %d\n", getpid());
 
-		apply_pipe(pipe_desc, WRITE, STDIN);
+		/*
+ 		 * Child wants to write to the pipe
+ 		 */
+		apply_pipe(pipe_desc, WRITE, STDOUT);
 
 		close_pipe(pipe_desc);
 
@@ -112,7 +146,17 @@ void create_child(int argc, char **argv, int pipe_desc[2], void (*next_command) 
 
 		fprintf(stderr, "child executing...\n");
 
-		next_command(argc, argv);
+		/*
+ 		 * If there are more commands left, create a pipe and spawn a child
+ 		 */
+		if(--cmd_counter > 0) {
+			create_child(argc, argv, commands, cmd_counter);
+		}
+
+		/*
+ 		 * Execute command
+ 		 */
+		commands[cmd_counter] (argc, argv);
 
 		exit(0);
 		
@@ -124,26 +168,67 @@ void create_child(int argc, char **argv, int pipe_desc[2], void (*next_command) 
 			exit(1);
 		}
 
+		/*
+ 		 * Parent wants to read from the pipe
+ 		 */
+		apply_pipe(pipe_desc, READ, STDIN);
+
 		close_pipe(pipe_desc);
 
+		/*
+ 		 * Wait for child to close
+ 		 */
 		waitpid(child_pid, &status, 0); // 0: No options
 
-		exit(0);
+		return;
 	}
 }
 
 void printenv(int argc, char **argv) {
-	perror("here");
-	execvp("printenv", argv);
+	perror("in printenv\n");
+	sleep(1);
+	/*
+	int retval;
+	int pipe_desc[2];
+
+	retval = pipe(pipe_desc);
+	if(-1 == retval) {
+		fprintf(stderr, "error opening pipe\n");
+		exit(1);
+	}
+
+	apply_pipe(pipe_desc, READ, STDOUT);
+
+	//create_child(argc, argv, pipe_desc, (void*)less);
+	*/
+	char *nargv[5] = {"printenv", NULL};
+	execvp("printenv", nargv);
 }
 
-void grep() {
+void grep(int argc, char **argv) {
+	perror("in grep\n");
+	if(argc > 1) {
+		sleep(1);
+		/* Do stuff, like parse argv */
+		/* Temp */
+		pipe_through();
+	}
+	pipe_through();
+	return;
 }
 
-void sort() {
+void sort(int argc, char **argv) {
+	perror("in sort\n");
+	sleep(1);
+	/* Temp */
+	pipe_through();
 }
 
-void less() {
+void less(int argc, char **argv) {
+	perror("in less\n");
+	sleep(1);
+	char *nargv[5] = {"less", NULL};
+	execvp("less", nargv);
 }
 
 /*
@@ -172,5 +257,20 @@ void close_pipe(int pipe[2]) {
 	if(-1 == retval) {
 		fprintf(stderr, "error closing\n");
 		exit(1);
+	}
+}
+
+/*
+ * Emulates 'cat' by throughputting stdin to stdout
+ */
+void pipe_through() {
+	char buffer[512];
+	size_t bytes;
+	while(1) {
+		bytes = fread(buffer, sizeof(char), 512, stdin);
+		fwrite(buffer, sizeof(char), 512, stdout);
+		fflush(stdout);
+		if(bytes<512 && feof(stdin))
+			break;
 	}
 }
