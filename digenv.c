@@ -81,7 +81,7 @@ int main(int argc, char **argv, char **envp) {
 	}
 	*/
 
-	int cmds = 4;
+	int cmds = 3;
 	/*int pipe_desc[2];*/
 	/*
 	 * An array of function pointers (void*)
@@ -90,7 +90,7 @@ int main(int argc, char **argv, char **envp) {
 	commands[0] = printenv;
 	commands[1] = grep;
 	commands[2] = sort;
-	commands[3] = less;
+	//commands[3] = less;
 
 
 	/*
@@ -110,7 +110,8 @@ int main(int argc, char **argv, char **envp) {
 	 */
 	create_child(argc, argv, commands, cmds);
 
-	pipe_through();
+	//pipe_through();
+	less(argc, argv);
 
 	return 0;
 }
@@ -226,7 +227,7 @@ void sort(int argc, char **argv) {
 
 void less(int argc, char **argv) {
 	perror("in less\n");
-	sleep(1);
+	//sleep(1);
 	char *nargv[5] = {"less", NULL};
 	execvp("less", nargv);
 }
