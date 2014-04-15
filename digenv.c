@@ -187,7 +187,7 @@ void create_child(int argc, char **argv, void (*commands[]) (int nargc, char **n
 
 void printenv(int argc, char **argv) {
 	perror("in printenv\n");
-	sleep(1);
+	//sleep(1);
 	/*
 	int retval;
 	int pipe_desc[2];
@@ -209,7 +209,7 @@ void printenv(int argc, char **argv) {
 void grep(int argc, char **argv) {
 	perror("in grep\n");
 	if(argc > 1) {
-		sleep(1);
+		//sleep(1);
 		/* Do stuff, like parse argv */
 		/* Temp */
 		pipe_through();
@@ -220,14 +220,12 @@ void grep(int argc, char **argv) {
 
 void sort(int argc, char **argv) {
 	perror("in sort\n");
-	sleep(1);
-	/* Temp */
-	pipe_through();
+	char *nargv[5] = {"sort", NULL};
+	execvp("sort", nargv);
 }
 
 void less(int argc, char **argv) {
 	perror("in less\n");
-	//sleep(1);
 	char *nargv[5] = {"less", NULL};
 	execvp("less", nargv);
 }
