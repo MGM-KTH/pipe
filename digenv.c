@@ -19,7 +19,12 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
+
+ #ifdef __APPLE__
+#include <sys/wait.h>
+#else
 #include <wait.h>
+#endif
 
 #define READ 0
 #define WRITE 1
@@ -171,7 +176,6 @@ void create_child(int argc, char **argv, void (*commands[]) (int nargc, char **n
 }
 
 void printenv(int argc, char **argv) {
-	perror("in printenv\n");
 	//sleep(1);
 	/*
 	int retval;
@@ -189,6 +193,7 @@ void printenv(int argc, char **argv) {
 	*/
 	char *nargv[5] = {"printenv", NULL};
 	execvp("printenv", nargv);
+	perror("in printenv\n");
 }
 
 /*
@@ -198,28 +203,32 @@ void printenv(int argc, char **argv) {
  *  >1    An error occurred.
  */
 void grep(int argc, char **argv) {
-	perror("in grep\n");
 	if(argc > 1) {
 		//sleep(1);
 		/* Do stuff, like parse argv */
 		/* Temp */
 		//pipe_through();
 		execvp("grep", argv);
+		perror("in grep\n");
 	}
-	pipe_through();
+	else {
+		execvp("cat", argv);
+		perror("in cat\n");
+	}
+	// pipe_through();
 	return;
 }
 
 void sort(int argc, char **argv) {
-	perror("in sort\n");
 	char *nargv[5] = {"sort", NULL};
 	execvp("sort", nargv);
+	perror("in sort\n");
 }
 
 void less(int argc, char **argv) {
+	// char *nargv[5] = {"less", NULL};
+	execlp("less", "less", NULL);
 	perror("in less\n");
-	char *nargv[5] = {"less", NULL};
-	execvp("less", nargv);
 }
 
 /*
