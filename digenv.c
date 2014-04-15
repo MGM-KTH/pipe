@@ -212,7 +212,8 @@ void grep(int argc, char **argv) {
 		//sleep(1);
 		/* Do stuff, like parse argv */
 		/* Temp */
-		pipe_through();
+		//pipe_through();
+		execvp("grep", argv);
 	}
 	pipe_through();
 	return;
