@@ -59,21 +59,6 @@ void register_sighandler( int signal_code, void (*handler) (int sig) )  {
 
 int main(int argc, char **argv, char **envp) {
 
-	/* 
-	 * We can read env. vars. with "getenv(const char* name)" 
-	 * e.g. getenv("PAGER"). If 0, use less (?)
-	 * execvp("grep",argv) ? something like that...
-	 */
-
-	/*
-	 * Grep will return:
-	 *
-	 *  0     One or more lines were selected.
-	 *  1     No lines were selected.
-	 *  >1    An error occurred.
-	 *
-	 */
-
 	/*int i;*/
 	/*
 	for (i = 0; envp[i] != NULL; ++i) {
@@ -206,6 +191,12 @@ void printenv(int argc, char **argv) {
 	execvp("printenv", nargv);
 }
 
+/*
+ * Grep will return:
+ *  0     One or more lines were selected.
+ *  1     No lines were selected.
+ *  >1    An error occurred.
+ */
 void grep(int argc, char **argv) {
 	perror("in grep\n");
 	if(argc > 1) {
