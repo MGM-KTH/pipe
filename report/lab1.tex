@@ -49,6 +49,9 @@
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
 
+\usepackage{fancyvrb}
+\DefineShortVerb{\|}
+
 
 \posttitle{\par\end{center}} % Remove space between author and title
 %----------------------------------------------------------------------------------------
@@ -58,6 +61,15 @@
 \begin{document}
 
 \section{Problembeskrivning}
+Laborationen går ut på att skriva ett litet program som hjälper en att ta reda
+på vilka environmentvariabler som är satta.
+Programmet ska använda sig av systemkommandona |printenv|, |grep|, |sort|
+och |less|.
+Med hjälp av nya processer och pipes ska dessa kommmandon kopplas ihop
+så att de motsvarar antingen
+\\
+|printenv  sort  less| eller \\
+|printenv  grep | parametrar | sort  less | \\
 
 
 \section{Förberedelsefrågor}
