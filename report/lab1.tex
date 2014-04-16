@@ -76,15 +76,47 @@ så att de motsvarar antingen
 \begin{enumerate}[1)]
 \item \emph{När en maskin bootar med UNIX skapas en process som har PID=1 och den lever så länge maskinen är uppe. Från den här processen skapas alla andra processer med fork. Vad heter denna process?}
 
+-- Processen heter \emph{init} på Linux, launchd på Mac.
 
 \item \emph{Kan environmentvariabler användas för att kommunicera mellan föräldra- och barnprocess? åt bägge hållen?}
-\item
-\item
-\item
-\item
-\item
-\item
-\item
+
+-- Child-processer får en kopia av parent-processens environmentvariabler. Detta innebär att en parent kan bestämma startvärdena för children.
+Eftersom child-processen får en kopia speglas inte ändringar i denna i parent-processens variabler. Alltså kan inte child-processer kommunicera till parent via dessa.
+
+\item \emph{Man kan tänka sig att skapa en odödlig child-process som fångar alla SIGKILL-signaler genom att registrera en egen signalhanterare kill\_handler som bara struntar i SIGKILL. Processen ska förstås ligga i en oändlig loop då den inte exekverar signalhanteraren. Testa! Skriv ett program med en sådan signalhanterare, kompilera och provkör. Vad händer?}
+
+Se appendix för programmet |immortal.c|
+-- Det är inte tillåtet att fånga SIGKILL då detta skulle vara en säkerhetsrisk. Det går däremot att fånga SIGINT.
+Resultat av ett program som försöker registrera en signalhanterare för SIGKILL:
+
+\begin{verbatim}
+sigaction() failed: Invalid argument
+\end{verbatim}
+
+Förklaringen finns i man-filen för sigaction:
+\begin{verbatim}
+ERRORS
+     The sigaction() system call will fail and no new signal handler will be
+     installed if one of the following occurs:
+
+     [EINVAL]           An attempt is made to ignore or supply a handler for
+                        SIGKILL or SIGSTOP.
+\end{verbatim}
+
+\item \emph{Varför returnerar fork 0 till child-processen och child-PID till parent-processen, i stället för tvärtom?}
+
+
+\item \emph{UNIX håller flera nivåer av tabeller för öppna filer, både en användarspecifik “File Descriptor Table” och en global “File Table”. Behövs egentligen File Table? Kan man ha offset i File Descriptor Table istället?}
+
+
+\item \emph{Kan man strunta i att stänga en pipe om man inte använder den? Hur skulle programbeteendet påverkas? Testa själv.}
+
+
+\item \emph{Vad händer om en av processerna plötsligt dör? Kan den andra processen upptäcka detta?}
+
+
+\item \emph{Hur kan du i ditt program ta reda på om grep misslyckades? Dvs om grep inte hittade någon förekomst av det den skulle söka efter eller om du gett felaktiga parametrar till grep?}
+
 \end{enumerate}
 
 \section{Programbeskrivning}
