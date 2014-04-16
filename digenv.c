@@ -95,9 +95,13 @@ void register_sighandler( int signal_code, void (*handler) (int sig) )  {
 }
 
 /* main
- *
+ * 
+ * main returns the exit status of the program.
+ * 'argc' is the number of arguments
+ * 'argv' is an array of arguments
+ * 
  */
-int main(int argc, char **argv, char **envp) {
+int main(int argc, char **argv) {
 	/*
 	 * An array of function pointers (void*)
 	 */
@@ -124,8 +128,9 @@ int main(int argc, char **argv, char **envp) {
  *
  * create_child returns the exit status of the child process it creates.
  *
- * Creates child processes that executes the functions specified in 'commands'.
- * cmd_counter is the number of functions to be executed.
+ * Creates child processes that executes the functions specified in 'commands',
+ * which is an array of function pointers.
+ * 'cmd_counter' is the number of functions to be executed.
  * Functions are executed in reverse order.
  */
 int create_child(
@@ -202,7 +207,7 @@ void printenv(int argc, char **argv) {
 }
 
 /*
- * Runs grep
+ * Runs grep with the arguments specified in 'argv'
  * grep will return:
  *  0     One or more lines were selected.
  *  1     No lines were selected.
