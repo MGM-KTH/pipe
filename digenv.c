@@ -61,7 +61,6 @@
 void apply_pipe(int pipe[2], int pfd, int fd);
 void close_pipe(int pipe[2]);
 void pipe_through();
-void register_sighandler(int signal_code, void (*handler) (int sig));
 int create_child(
 	int argc, 
 	char **argv, 
@@ -72,27 +71,6 @@ void printenv(int argc, char **argv);
 void grep(int argc, char **argv);
 void sort(int argc, char **argv);
 void pager(int argc, char **argv);
-
-/* register_sighandler
- *
- * Registers a signal handler
- */
-void register_sighandler( int signal_code, void (*handler) (int sig) )  {
-	int retval;
-
-	struct sigaction signal_parameters;
-
-	signal_parameters.sa_handler = handler;
-	sigemptyset(&signal_parameters.sa_mask);
-	signal_parameters.sa_flags = 0;
-
-	retval = sigaction(signal_code, &signal_parameters, (void *) 0);
-
-	if(-1 == retval) {
-		perror("sigaction() failed");
-		exit(EXIT_FAILURE);
-	}
-}
 
 /* main
  * 
