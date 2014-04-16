@@ -85,7 +85,7 @@ Eftersom child-processen får en kopia speglas inte ändringar i denna i parent-
 
 \item \emph{Man kan tänka sig att skapa en odödlig child-process som fångar alla SIGKILL-signaler genom att registrera en egen signalhanterare kill\_handler som bara struntar i SIGKILL. Processen ska förstås ligga i en oändlig loop då den inte exekverar signalhanteraren. Testa! Skriv ett program med en sådan signalhanterare, kompilera och provkör. Vad händer?}
 
-Se appendix för programmet |immortal.c|
+-- Se appendix för programmet, |immortal.c| \\
 -- Det är inte tillåtet att fånga SIGKILL då detta skulle vara en säkerhetsrisk. Det går däremot att fånga SIGINT.
 Resultat av ett program som försöker registrera en signalhanterare för SIGKILL:
 
@@ -120,6 +120,53 @@ ERRORS
 \end{enumerate}
 
 \section{Programbeskrivning}
+
+\newpage
+\section*{Appendix}
+immortal.c:\\
+
+\begin{verbatim}
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/types.h>
+
+/*
+ * Register a signal handler
+ */
+void register_sighandler( int signal_code, void (*handler) (int sig) )  {
+    int retval;
+
+    struct sigaction signal_parameters;
+
+    signal_parameters.sa_handler = handler;
+    sigemptyset(&signal_parameters.sa_mask);
+    signal_parameters.sa_flags = 0;
+
+    retval = sigaction(signal_code, &signal_parameters, (void *) 0);
+
+    if(-1 == retval) {
+        perror("sigaction() failed");
+        exit(1);
+    }
+}
+
+void kill_handler(int signal_code) {
+    /* Do nothing */
+    printf("%s\n", "kill_handler called");
+}
+
+int main() {
+    register_sighandler(SIGKILL, kill_handler);
+    int a = 0;
+    while(1) {
+        ++a;
+    }
+}
+\end{verbatim}
+\newpage
 
 
 %----------------------------------------------------------------------------------------
