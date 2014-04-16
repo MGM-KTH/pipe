@@ -10,7 +10,7 @@
  *     printenv(1), grep(1), sort(1), less(1)
  *
  * @author: Gustaf Lindstedt
- * @author: Martin Runelöv
+ * @author: Martin Runelöv 
  */
 
 #include <stdio.h>
