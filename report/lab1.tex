@@ -105,21 +105,43 @@ ERRORS
 
 \item \emph{Varför returnerar fork 0 till child-processen och child-PID till parent-processen, i stället för tvärtom?}
 
+-- Parent-Children är en one-to-many-relation. En child-process kan anropa getppid() för att få parent-processens PID,
+men det enda sättet för en parent-process att hålla reda på sina child-processer är via returvärdet från fork.
 
-\item \emph{UNIX håller flera nivåer av tabeller för öppna filer, både en användarspecifik “File Descriptor Table” och en global “File Table”. Behövs egentligen File Table? Kan man ha offset i File Descriptor Table istället?}
+\item \emph{UNIX håller flera nivåer av tabeller för öppna filer, både en användarspecifik ''File Descriptor Table'' och en global ''File Table''. Behövs egentligen File Table? Kan man ha offset i File Descriptor Table istället?}
 
+-- Nej, ''File Table'' behövs. Förutom offsets håller den reda på "access mode" (t.ex. read/write) samt antalet "File Descriptor Table"-entries som pekar på den.\\
+Denna mellanhand är bland annat användbar för "In-memory inode table", som inte har dubletter. Bara om en fil vill öppna en för nuvarande stängd fil skapas ett entry.
 
 \item \emph{Kan man strunta i att stänga en pipe om man inte använder den? Hur skulle programbeteendet påverkas? Testa själv.}
 
+-- Nej. Read-änden av pipen får EOF när pipen stängs. Utan detta blockeras programmet vid läsningen från pipen.
+Om pipen inte alls används är det fortfarande ett problem eftersom det är en oanvänd resurs. Det är alltså en sorts ''memory leak''. När man kör |fork| skapas det dubletter av parent-processens file descriptors. Detta skapar då onödiga entries i ''File Descriptor Table''. Man ska inte förvänta sig att OSet hanterar detta automatiskt.
 
 \item \emph{Vad händer om en av processerna plötsligt dör? Kan den andra processen upptäcka detta?}
 
+-- Parent-processen kan få exit-status av sina children via |wait(&status)|.
 
 \item \emph{Hur kan du i ditt program ta reda på om grep misslyckades? Dvs om grep inte hittade någon förekomst av det den skulle söka efter eller om du gett felaktiga parametrar till grep?}
+
+-- Från man-filen:
+\begin{verbatim}
+Grep will return:
+    0     One or more lines were selected.
+    1     No lines were selected.
+    >1    An error occurred.
+\end{verbatim}
+
+Man kan alltså kontrollera "signal"-variabeln efter |wait|.
 
 \end{enumerate}
 
 \section{Programbeskrivning}
+
+Vi har alltid fyra delprogram. Om grep inte får några argument ersätts den av 
+en "pipethrough" som skriver stdin till stdout. Detta är inte nödvändigt, men
+det är utformat så för att enkelt kunna utöka detta steg med mer funktionalitet.
+
 
 \newpage
 \section*{Appendix}
@@ -168,6 +190,46 @@ int main() {
 \end{verbatim}
 \newpage
 
+
+Exempelkörning:\\
+
+\begin{verbatim}
+$ gcc -Wall digenv.c -o digenv
+$ ./digenv 
+Apple_PubSub_Socket_Render=/tmp/launch-HvRHti/Render
+CLASSPATH=/Applications/weka-3-6-10/weka.jar:/Applications/weka-3-6-10/weka-src.jar:.
+CLICOLOR=1
+DISPLAY=/tmp/launch-KHvn2R/org.macosforge.xquartz:0
+GOROOT=/Users/mrunelov/Programming/mygo
+HOME=/Users/mrunelov
+LANG=sv_SE.UTF-8
+LOGNAME=mrunelov
+LSCOLORS=GxFxCxDxBxegedabagaced
+OLDPWD=/Users/mrunelov/GitHub/MGM-KTH
+PATH=/usr/local/Cellar/qt/4.8.5/bin:/usr/local/mysql/bin:/Users/mrunelov/scripts:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/local/google_appengine:/usr/local:/Library/Frameworks/Python.framework/Versions/2.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/go/bin:/usr/texbin:/Users/mrunelov/Programming/mygo/bin:/usr/local/go/bin
+PS1=\W [\u]$ 
+PWD=/Users/mrunelov/GitHub/MGM-KTH/pipe
+PYTHONPATH=/usr/local/Cellar/qt/4.8.5/bin:/usr/local/lib/python2.7/site-packages:
+SHELL=/usr/local/bin/bash
+SHLVL=1
+SSH_AUTH_SOCK=/tmp/launch-N6JjM3/Listeners
+TERM=xterm-256color
+TERM_PROGRAM=Apple_Terminal
+TERM_PROGRAM_VERSION=326
+TERM_SESSION_ID=39F6CA28-13D0-4965-AFDD-B46D678C9F0C
+TMPDIR=/var/folders/pt/xv7svsgx3_3gw16czfy_zx9r0000gn/T/
+USER=mrunelov
+_=./digenv
+__CF_USER_TEXT_ENCODING=0x1F5:0:0
+__CHECKFIX1436934=1
+(END) 
+$ ./digenv SHELL
+SHELL=/usr/local/bin/bash
+(END) 
+$ ./digenv -c SH*
+13
+(END)
+\end{verbatim}
 
 %------------------------------------------------------------------------------
 
