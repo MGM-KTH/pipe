@@ -105,21 +105,42 @@ ERRORS
 
 \item \emph{Varför returnerar fork 0 till child-processen och child-PID till parent-processen, i stället för tvärtom?}
 
+-- Parent-Children är en one-to-many-relation. En child-process kan anropa getppid() för att få parent-processens PID,
+men det enda sättet för en parent-process att hålla reda på sina child-processer är via returvärdet från fork.
 
-\item \emph{UNIX håller flera nivåer av tabeller för öppna filer, både en användarspecifik “File Descriptor Table” och en global “File Table”. Behövs egentligen File Table? Kan man ha offset i File Descriptor Table istället?}
+\item \emph{UNIX håller flera nivåer av tabeller för öppna filer, både en användarspecifik ''File Descriptor Table'' och en global ''File Table''. Behövs egentligen File Table? Kan man ha offset i File Descriptor Table istället?}
 
+-- Nej, ''File Table'' behövs. Förutom offsets håller den reda på "access mode" (t.ex. read/write) samt antalet "File Descriptor Table"-entries som pekar på den.\\
+Denna mellanhand är bland annat användbar för "In-memory inode table", som inte har dubletter. Bara om en fil vill öppna en för nuvarande stängd fil skapas ett entry.
 
 \item \emph{Kan man strunta i att stänga en pipe om man inte använder den? Hur skulle programbeteendet påverkas? Testa själv.}
 
+-- Nej. Read-änden av pipen får EOF när pipen stängs. Utan detta blockeras programmet vid läsningen från pipen.
 
 \item \emph{Vad händer om en av processerna plötsligt dör? Kan den andra processen upptäcka detta?}
 
+-- Parent-processen kan få exit-status av sina children via |wait(&status)|.
 
 \item \emph{Hur kan du i ditt program ta reda på om grep misslyckades? Dvs om grep inte hittade någon förekomst av det den skulle söka efter eller om du gett felaktiga parametrar till grep?}
+
+-- Från man-filen:
+\begin{verbatim}
+Grep will return:
+    0     One or more lines were selected.
+    1     No lines were selected.
+    >1    An error occurred.
+\end{verbatim}
+
+Man kan alltså kontrollera "signal"-variabeln efter |wait|.
 
 \end{enumerate}
 
 \section{Programbeskrivning}
+
+Vi har alltid fyra delprogram. Om grep inte får några argument ersätts den av 
+en "pipethrough" som skriver stdin till stdout. Detta är inte nödvändigt, men
+det är utformat så för att enkelt kunna utöka detta steg med mer funktionalitet.
+
 
 \newpage
 \section*{Appendix}
