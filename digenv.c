@@ -138,7 +138,7 @@ int create_child(int argc, char **argv, void (*commands[]) (int nargc, char **na
 
 	if(0 == child_pid) {
 		/*
- 		 * Child wants to write to the pipe
+ 		 * Child writes to the pipe
  		 */
 		apply_pipe(pipe_desc, WRITE, STDOUT);
 
@@ -168,7 +168,7 @@ int create_child(int argc, char **argv, void (*commands[]) (int nargc, char **na
 		}
 
 		/*
- 		 * Parent wants to read from the pipe
+ 		 * Parent reads from the pipe
  		 */
 		apply_pipe(pipe_desc, READ, STDIN);
 		close_pipe(pipe_desc);
