@@ -61,7 +61,6 @@
 void apply_pipe(int pipe[2], int pfd, int fd);
 void close_pipe(int pipe[2]);
 void pipe_through();
-void register_sighandler(int signal_code, void (*handler) (int sig));
 int create_child(
 	int argc, 
 	char **argv, 
