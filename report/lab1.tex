@@ -169,6 +169,46 @@ int main() {
 \newpage
 
 
+Exempelkörning:\\
+
+\begin{verbatim}
+$ gcc -Wall digenv.c -o digenv
+$ ./digenv 
+Apple_PubSub_Socket_Render=/tmp/launch-HvRHti/Render
+CLASSPATH=/Applications/weka-3-6-10/weka.jar:/Applications/weka-3-6-10/weka-src.jar:.
+CLICOLOR=1
+DISPLAY=/tmp/launch-KHvn2R/org.macosforge.xquartz:0
+GOROOT=/Users/mrunelov/Programming/mygo
+HOME=/Users/mrunelov
+LANG=sv_SE.UTF-8
+LOGNAME=mrunelov
+LSCOLORS=GxFxCxDxBxegedabagaced
+OLDPWD=/Users/mrunelov/GitHub/MGM-KTH
+PATH=/usr/local/Cellar/qt/4.8.5/bin:/usr/local/mysql/bin:/Users/mrunelov/scripts:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/local/google_appengine:/usr/local:/Library/Frameworks/Python.framework/Versions/2.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/go/bin:/usr/texbin:/Users/mrunelov/Programming/mygo/bin:/usr/local/go/bin
+PS1=\W [\u]$ 
+PWD=/Users/mrunelov/GitHub/MGM-KTH/pipe
+PYTHONPATH=/usr/local/Cellar/qt/4.8.5/bin:/usr/local/lib/python2.7/site-packages:
+SHELL=/usr/local/bin/bash
+SHLVL=1
+SSH_AUTH_SOCK=/tmp/launch-N6JjM3/Listeners
+TERM=xterm-256color
+TERM_PROGRAM=Apple_Terminal
+TERM_PROGRAM_VERSION=326
+TERM_SESSION_ID=39F6CA28-13D0-4965-AFDD-B46D678C9F0C
+TMPDIR=/var/folders/pt/xv7svsgx3_3gw16czfy_zx9r0000gn/T/
+USER=mrunelov
+_=./digenv
+__CF_USER_TEXT_ENCODING=0x1F5:0:0
+__CHECKFIX1436934=1
+(END) 
+$ ./digenv SHELL
+SHELL=/usr/local/bin/bash
+(END) 
+$ ./digenv -c SH*
+13
+(END)
+\end{verbatim}
+
 %----------------------------------------------------------------------------------------
 
 \end{document}
