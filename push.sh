@@ -5,6 +5,7 @@ echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     git add digenv.c
-    git commit -m '$1'
+    commit_string="git commit -m $1"
+    eval $commit_string
     git push
 fi
