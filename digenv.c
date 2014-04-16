@@ -45,7 +45,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
- #ifdef __APPLE__
+#ifdef __APPLE__
 #include <sys/wait.h>
 #else
 #include <wait.h>
@@ -127,15 +127,15 @@ int create_child(
 
 	if(0 == child_pid) {
 		/*
- 		 * Child writes to the pipe
- 		 */
+		 * Child writes to the pipe
+		 */
 		apply_pipe(pipe_desc, WRITE, STDOUT);
 
 		close_pipe(pipe_desc);
 
 		/*
- 		 * If there are more commands left, create a pipe and spawn a child
- 		 */
+		 * If there are more commands left, create a pipe and spawn a child
+		 */
 		if(--cmd_counter > 0) {
 			status = create_child(argc, argv, commands, cmd_counter);
 			if (status) {
@@ -144,8 +144,8 @@ int create_child(
 		}
 
 		/*
- 		 * Execute command
- 		 */
+		 * Execute command
+		 */
 		commands[cmd_counter] (argc, argv);
 
 		exit(EXIT_SUCCESS);
@@ -157,14 +157,14 @@ int create_child(
 		}
 
 		/*
- 		 * Parent reads from the pipe
- 		 */
+		 * Parent reads from the pipe
+		 */
 		apply_pipe(pipe_desc, READ, STDIN);
 		close_pipe(pipe_desc);
 
 		/*
- 		 * Wait for child to close
- 		 */
+		 * Wait for child to close
+		 */
 		waitpid(child_pid, &status, 0); /* 0: No options */
 		return WEXITSTATUS(status);
 	}
@@ -189,8 +189,8 @@ void printenv(int argc, char **argv) {
 void grep(int argc, char **argv) {
 	if(argc > 1) {
 		/* argv[0] = "grep";  first argument is command name.
- 		 * Currently set to "digenv".
- 		 */
+		 * Currently set to "digenv".
+		 */
 		execvp("grep", argv);
 		perror("failed to execute grep");
 	}
