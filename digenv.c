@@ -31,7 +31,7 @@
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
-#define LINELENGTH 256
+#define LINELENGTH 256 // used by stdin-->stdout (pipe_through/cat)
 
 void apply_pipe(int pipe[2], int pfd, int fd);
 void close_pipe(int pipe[2]);
@@ -41,7 +41,7 @@ void create_child(int argc, char **argv, void (*commands[]) (int nargc, char **n
 void printenv(int argc, char **argv);
 void grep(int argc, char **argv);
 void sort(int argc, char **argv);
-void less(int argc, char **argv);
+void pager(int argc, char **argv);
 
 /*
  * Register a signal handler
@@ -64,19 +64,10 @@ void register_sighandler( int signal_code, void (*handler) (int sig) )  {
 }
 
 int main(int argc, char **argv, char **envp) {
-
-	/*int i;*/
-	/*
-	for (i = 0; envp[i] != NULL; ++i) {
-		printf("%2d:%s\n", i, envp[i]);
-	}
-	*/
-
-	int cmds = 3;
-	/*int pipe_desc[2];*/
 	/*
 	 * An array of function pointers (void*)
 	 */
+	int cmds = 3;
 	void (*commands[cmds]) (int nargc, char**nargv);
 	commands[0] = printenv;
 	commands[1] = grep;
@@ -102,7 +93,7 @@ int main(int argc, char **argv, char **envp) {
 	create_child(argc, argv, commands, cmds);
 
 	//pipe_through();
-	less(argc, argv);
+	pager(argc, argv);
 
 	return 0;
 }
@@ -226,9 +217,13 @@ void sort(int argc, char **argv) {
 	perror("failed to execute sort");
 }
 
-void less(int argc, char **argv) {
-	// char *nargv[5] = {"less", NULL};
-	execlp("less", "less", NULL);
+void pager(int argc, char **argv) {
+	char* pager = getenv("PAGER");
+	if(!pager) {
+		pager = "less";
+	}
+	char *nargv[5] = {pager, NULL};
+	execvp(pager, nargv);
 	perror("failed to execute less");
 }
 
