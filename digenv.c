@@ -61,7 +61,12 @@ void apply_pipe(int pipe[2], int pfd, int fd);
 void close_pipe(int pipe[2]);
 void pipe_through();
 void register_sighandler(int signal_code, void (*handler) (int sig));
-int create_child(int argc, char **argv, void (*commands[]) (int nargc, char **nargv), int cmd_counter);
+int create_child(
+	int argc, 
+	char **argv, 
+	void (*commands[]) (int nargc, char **nargv),
+	int cmd_counter
+);
 void printenv(int argc, char **argv);
 void grep(int argc, char **argv);
 void sort(int argc, char **argv);
