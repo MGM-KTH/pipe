@@ -31,6 +31,7 @@
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
+#define LINELENGTH 256
 
 void apply_pipe(int pipe[2], int pfd, int fd);
 void close_pipe(int pipe[2]);
@@ -208,14 +209,14 @@ void grep(int argc, char **argv) {
 		/* Do stuff, like parse argv */
 		/* Temp */
 		//pipe_through();
+		argv[0] = "grep"; // first argument is command name
 		execvp("grep", argv);
 		perror("in grep\n");
 	}
 	else {
-		execvp("cat", argv);
-		perror("in cat\n");
+		// execvp("cat", argv);
+		pipe_through();
 	}
-	// pipe_through();
 	return;
 }
 
@@ -264,13 +265,19 @@ void close_pipe(int pipe[2]) {
  * Emulates 'cat' by throughputting stdin to stdout
  */
 void pipe_through() {
-	char buffer[512];
-	size_t bytes;
-	while(1) {
-		bytes = fread(buffer, sizeof(char), 512, stdin);
-		fwrite(buffer, sizeof(char), 512, stdout);
-		fflush(stdout);
-		if(bytes<512 && feof(stdin))
-			break;
+	char line[512];
+	while(fgets(line,LINELENGTH,stdin)) {
+		if(fputs(line,stdout)==EOF) {
+			perror("Write to stdout failed");
+			exit(1);
+		}
 	}
+	// size_t bytes;
+	// while(1) {
+	// 	bytes = fread(buffer, sizeof(char), 512, stdin);
+	// 	fwrite(buffer, sizeof(char), 512, stdout);
+	// 	fflush(stdout);
+	// 	if(bytes<512 && feof(stdin))
+	// 		break;
+	// }
 }
