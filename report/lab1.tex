@@ -74,19 +74,30 @@ så att de motsvarar något av:
 
 \section{Förberedelsefrågor}
 \begin{enumerate}[1)]
-\item \emph{När en maskin bootar med UNIX skapas en process som har PID=1 och den lever så länge maskinen är uppe. Från den här processen skapas alla andra processer med fork. Vad heter denna process?}
+\item \emph{När en maskin bootar med UNIX skapas en process som har PID=1 och
+  den lever så länge maskinen är uppe. Från den här processen skapas alla andra
+processer med fork. Vad heter denna process?}
 
 -- Processen heter \emph{init} på Linux, launchd på Mac.
 
-\item \emph{Kan environmentvariabler användas för att kommunicera mellan föräldra- och barnprocess? åt bägge hållen?}
+\item \emph{Kan environmentvariabler användas för att kommunicera mellan
+  föräldra- och barnprocess? åt bägge hållen?}
 
--- Child-processer får en kopia av parent-processens environmentvariabler. Detta innebär att en parent kan bestämma startvärdena för children.
-Eftersom child-processen får en kopia speglas inte ändringar i denna i parent-processens variabler. Alltså kan inte child-processer kommunicera till parent via dessa.
+-- Child-processer får en kopia av parent-processens environmentvariabler.
+Detta innebär att en parent kan bestämma startvärdena för children.
+Eftersom child-processen får en kopia speglas inte ändringar i denna i
+parent-processens variabler. Alltså kan inte child-processer kommunicera till
+parent via dessa.
 
-\item \emph{Man kan tänka sig att skapa en odödlig child-process som fångar alla SIGKILL-signaler genom att registrera en egen signalhanterare kill\_handler som bara struntar i SIGKILL. Processen ska förstås ligga i en oändlig loop då den inte exekverar signalhanteraren. Testa! Skriv ett program med en sådan signalhanterare, kompilera och provkör. Vad händer?}
+\item \emph{Man kan tänka sig att skapa en odödlig child-process som fångar
+  alla SIGKILL-signaler genom att registrera en egen signalhanterare
+kill\_handler som bara struntar i SIGKILL. Processen ska förstås ligga i en
+oändlig loop då den inte exekverar signalhanteraren. Testa! Skriv ett program
+med en sådan signalhanterare, kompilera och provkör. Vad händer?}
 
 -- Se appendix för programmet, |immortal.c| \\
--- Det är inte tillåtet att fånga SIGKILL då detta skulle vara en säkerhetsrisk. Det går däremot att fånga SIGINT.
+-- Det är inte tillåtet att fånga SIGKILL då detta skulle vara en
+säkerhetsrisk. Det går däremot att fånga SIGINT.
 Resultat av ett program som försöker registrera en signalhanterare för SIGKILL:
 
 \begin{verbatim}
@@ -103,26 +114,45 @@ ERRORS
                         SIGKILL or SIGSTOP.
 \end{verbatim}
 
-\item \emph{Varför returnerar fork 0 till child-processen och child-PID till parent-processen, i stället för tvärtom?}
+\item \emph{Varför returnerar fork 0 till child-processen och child-PID till
+  parent-processen, i stället för tvärtom?}
 
--- Parent-Children är en one-to-many-relation. En child-process kan anropa getppid() för att få parent-processens PID,
-men det enda sättet för en parent-process att hålla reda på sina child-processer är via returvärdet från fork.
+-- Parent-Children är en one-to-many-relation. En child-process kan anropa
+getppid() för att få parent-processens PID,
+men det enda sättet för en parent-process att hålla reda på sina
+child-processer är via returvärdet från fork.
 
-\item \emph{UNIX håller flera nivåer av tabeller för öppna filer, både en användarspecifik ''File Descriptor Table'' och en global ''File Table''. Behövs egentligen File Table? Kan man ha offset i File Descriptor Table istället?}
+\item \emph{UNIX håller flera nivåer av tabeller för öppna filer, både en
+  användarspecifik ''File Descriptor Table'' och en global ''File Table''.
+Behövs egentligen File Table? Kan man ha offset i File Descriptor Table
+istället?}
 
--- Nej, ''File Table'' behövs. Förutom offsets håller den reda på "access mode" (t.ex. read/write) samt antalet "File Descriptor Table"-entries som pekar på den.\\
-Denna mellanhand är bland annat användbar för "In-memory inode table", som inte har dubletter. Bara om en fil vill öppna en för nuvarande stängd fil skapas ett entry.
+-- Nej, ''File Table'' behövs. Förutom offsets håller den reda på "access mode"
+(t.ex. read/write) samt antalet "File Descriptor Table"-entries som pekar på
+den.\\
+Denna mellanhand är bland annat användbar för "In-memory inode table", som inte
+har dubletter. Bara om en fil vill öppna en för nuvarande stängd fil skapas
+ett entry.
 
-\item \emph{Kan man strunta i att stänga en pipe om man inte använder den? Hur skulle programbeteendet påverkas? Testa själv.}
+\item \emph{Kan man strunta i att stänga en pipe om man inte använder den? Hur
+  skulle programbeteendet påverkas? Testa själv.}
 
--- Nej. Read-änden av pipen får EOF när pipen stängs. Utan detta blockeras programmet vid läsningen från pipen.
-Om pipen inte alls används är det fortfarande ett problem eftersom det är en oanvänd resurs. Det är alltså en sorts ''memory leak''. När man kör |fork| skapas det dubletter av parent-processens file descriptors. Detta skapar då onödiga entries i ''File Descriptor Table''. Man ska inte förvänta sig att OSet hanterar detta automatiskt.
+-- Nej. Read-änden av pipen får EOF när pipen stängs. Utan detta blockeras
+programmet vid läsningen från pipen.
+Om pipen inte alls används är det fortfarande ett problem eftersom det är en
+oanvänd resurs. Det är alltså en sorts ''memory leak''. När man kör |fork|
+skapas det dubletter av parent-processens file descriptors. Detta skapar då
+onödiga entries i ''File Descriptor Table''. Man ska inte förvänta sig att
+OSet hanterar detta automatiskt.
 
-\item \emph{Vad händer om en av processerna plötsligt dör? Kan den andra processen upptäcka detta?}
+\item \emph{Vad händer om en av processerna plötsligt dör? Kan den andra
+  processen upptäcka detta?}
 
 -- Parent-processen kan få exit-status av sina children via |wait(&status)|.
 
-\item \emph{Hur kan du i ditt program ta reda på om grep misslyckades? Dvs om grep inte hittade någon förekomst av det den skulle söka efter eller om du gett felaktiga parametrar till grep?}
+\item \emph{Hur kan du i ditt program ta reda på om grep misslyckades? Dvs om
+  grep inte hittade någon förekomst av det den skulle söka efter eller om du
+gett felaktiga parametrar till grep?}
 
 -- Från man-filen:
 \begin{verbatim}
