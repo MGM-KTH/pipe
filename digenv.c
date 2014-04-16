@@ -116,7 +116,7 @@ void create_child(int argc, char **argv, void (*commands[]) (int nargc, char **n
 
 	retval = pipe(pipe_desc);
 	if(-1 == retval) {
-		perror("error opening pipe\n");
+		perror("error opening pipe");
 		exit(1);
 	}
 
@@ -155,7 +155,7 @@ void create_child(int argc, char **argv, void (*commands[]) (int nargc, char **n
 		int status;
 
 		if(-1 == child_pid) {
-			perror("fork() failed!\n");
+			perror("fork() failed!");
 			exit(1);
 		}
 
@@ -193,7 +193,7 @@ void printenv(int argc, char **argv) {
 	*/
 	char *nargv[5] = {"printenv", NULL};
 	execvp("printenv", nargv);
-	perror("in printenv\n");
+	perror("failed to execute printenv");
 }
 
 /*
@@ -209,11 +209,11 @@ void grep(int argc, char **argv) {
 		/* Temp */
 		//pipe_through();
 		execvp("grep", argv);
-		perror("in grep\n");
+		perror("failed to execute grep");
 	}
 	else {
 		execvp("cat", argv);
-		perror("in cat\n");
+		perror("failed to execute cat");
 	}
 	// pipe_through();
 	return;
@@ -222,13 +222,13 @@ void grep(int argc, char **argv) {
 void sort(int argc, char **argv) {
 	char *nargv[5] = {"sort", NULL};
 	execvp("sort", nargv);
-	perror("in sort\n");
+	perror("failed to execute sort");
 }
 
 void less(int argc, char **argv) {
 	// char *nargv[5] = {"less", NULL};
 	execlp("less", "less", NULL);
-	perror("in less\n");
+	perror("failed to execute less");
 }
 
 /*
@@ -238,7 +238,7 @@ void apply_pipe(int pipe[2], int pfd, int fd) {
 	int retval;
 	retval = dup2(pipe[pfd], fd);
 	if(-1 == retval) {
-		fprintf(stderr, "error copying file descriptor to stdin\n");
+		perror("error copying file descriptor to stdin");
 		exit(1);
 	}
 }
@@ -250,12 +250,12 @@ void close_pipe(int pipe[2]) {
 	int retval;
 	retval = close(pipe[READ]);
 	if(-1 == retval) {
-		fprintf(stderr, "error closing pipe\n");
+		perror("error closing pipe");
 		exit(1);
 	}
 	retval = close(pipe[WRITE]);
 	if(-1 == retval) {
-		fprintf(stderr, "error closing\n");
+		perror("error closing");
 		exit(1);
 	}
 }
