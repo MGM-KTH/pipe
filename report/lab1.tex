@@ -116,6 +116,7 @@ Denna mellanhand är bland annat användbar för "In-memory inode table", som in
 \item \emph{Kan man strunta i att stänga en pipe om man inte använder den? Hur skulle programbeteendet påverkas? Testa själv.}
 
 -- Nej. Read-änden av pipen får EOF när pipen stängs. Utan detta blockeras programmet vid läsningen från pipen.
+Om pipen inte alls används är det fortfarande ett problem eftersom det är en oanvänd resurs. Det är alltså en sorts ''memory leak''. När man kör |fork| skapas det dubletter av parent-processens file descriptors. Detta skapar då onödiga entries i ''File Descriptor Table''. Man ska inte förvänta sig att OSet hanterar detta automatiskt.
 
 \item \emph{Vad händer om en av processerna plötsligt dör? Kan den andra processen upptäcka detta?}
 
