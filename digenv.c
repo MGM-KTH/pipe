@@ -1,12 +1,13 @@
 /*
  * NAME
- *     Digenv - Digs (searches) for environment variables and prints a sorted list of the results
+ *     Digenv - Digs (searches) for environment variables
+ *              and prints a sorted list of the results
  *
  * SYNTAX
  *     digenv [-abcdDEFGHhIiJLlmnOopqRSsUVvwxZ] [-A num] [-B num] [-C[num]]
-          [-e pattern] [-f file] [--binary-files=value] [--color[=when]]
-          [--colour[=when]] [--context[=num]] [--label] [--line-buffered]
-          [--null] [pattern]
+ *        [-e pattern] [-f file] [--binary-files=value] [--color[=when]]
+ *        [--colour[=when]] [--context[=num]] [--label] [--line-buffered]
+ *        [--null] [pattern]
  * DESCRIPTION
  *     Without parameters the program corresponds to "printenv | sort | PAGER".
  *     Otherwise, it corresponds to "printenv | grep [args] | sort | PAGER".
@@ -122,7 +123,12 @@ int main(int argc, char **argv, char **envp) {
  * cmd_counter is the number of functions to be executed.
  * Functions are executed in reverse order.
  */
-int create_child(int argc, char **argv, void (*commands[]) (int nargc, char **nargv), int cmd_counter) {
+int create_child(
+		int argc,
+		char **argv,
+		void (*commands[]) (int nargc, char **nargv),
+		int cmd_counter) {
+
 	pid_t child_pid;
 	int retval;
 	int pipe_desc[2];
@@ -199,7 +205,9 @@ void printenv(int argc, char **argv) {
  */
 void grep(int argc, char **argv) {
 	if(argc > 1) {
-		/* argv[0] = "grep";  first argument is command name. Currently set to "digenv". */
+		/* argv[0] = "grep";  first argument is command name.
+ 		 * Currently set to "digenv".
+ 		 */
 		execvp("grep", argv);
 		perror("failed to execute grep");
 	}
