@@ -44,6 +44,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <strings.h>
 
 #ifdef __APPLE__
 #include <sys/wait.h>
@@ -219,13 +220,24 @@ void sort(int argc, char **argv) {
  * environment variable PAGER. Defaults to less.
  */
 void pager(int argc, char **argv) {
+	int retval, i;
 	char* pager = getenv("PAGER");
 	if(!pager) {
 		pager = "less";
 	}
 	char *nargv[5] = {pager, NULL};
-	execvp(pager, nargv);
-	perror("failed to execute less");
+	/* If exec failed due to not finding less, try with more */
+	for(i = 0; i < 3; ++i) {
+		retval = execvp(pager, nargv);
+		if(-1 == retval) {
+			if(ENOENT == errno) {
+				pager = (strncasecmp(pager, "less", 4))?"less":"more";
+			}else{
+				break;
+			}
+		}
+	}
+	perror("failed to execute pager ");
 }
 
 /*
