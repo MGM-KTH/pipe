@@ -57,7 +57,8 @@
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
-#define LINELENGTH 256 // used by stdin-->stdout (pipe_through/cat)
+#define LINELENGTH 256 /* used by stdin-->stdout (pipe_through/cat) */
+#define GREP_NO_MATCH 255
 
 void apply_pipe(int pipe[2], int pfd, int fd);
 void close_pipe(int pipe[2]);
@@ -72,6 +73,8 @@ void printenv(int argc, char **argv);
 void grep(int argc, char **argv);
 void sort(int argc, char **argv);
 void pager(int argc, char **argv);
+
+int IS_GREP_PARENT = 1; /* grep flag, set to true for parent of grep process */
 
 /* main
  * 
@@ -94,6 +97,9 @@ int main(int argc, char **argv) {
 	 * Pipe is closed within create_child
 	 */
 	int status = create_child(argc, argv, commands, cmds);
+	if (status == GREP_NO_MATCH) {
+		fprintf(stdout, "%s\n", "No matches were found.");
+	}
 	if(status) {
 		exit(status);
 	}
@@ -172,6 +178,8 @@ int create_child(
 		 * Wait for child to close
 		 */
 		waitpid(child_pid, &status, 0); /* 0: No options */
+	    if (IS_GREP_PARENT && WEXITSTATUS(status) == 1) /* no lines were selected by grep */
+		    return GREP_NO_MATCH;
 		return WEXITSTATUS(status);
 	}
 }
@@ -197,6 +205,7 @@ void grep(int argc, char **argv) {
 		/* argv[0] = "grep";  first argument is command name.
 		 * Currently set to "digenv".
 		 */
+		IS_GREP_PARENT = 0; /* true */
 		execvp("grep", argv);
 		perror("failed to execute grep");
 	}
