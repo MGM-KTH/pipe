@@ -73,7 +73,7 @@ void grep(int argc, char **argv);
 void sort(int argc, char **argv);
 void pager(int argc, char **argv);
 
-int IS_GREP = 1; /* false */
+int IS_GREP_PARENT = 1; /* grep flag, set to true for parent of grep process */
 
 /* main
  * 
@@ -177,7 +177,7 @@ int create_child(
 		 * Wait for child to close
 		 */
 		waitpid(child_pid, &status, 0); /* 0: No options */
-	    if (IS_GREP && WEXITSTATUS(status) == 1) /* no lines were selected by grep */
+	    if (IS_GREP_PARENT && WEXITSTATUS(status) == 1) /* no lines were selected by grep */
 		    return GREP_NO_MATCH;
 		return WEXITSTATUS(status);
 	}
@@ -204,7 +204,7 @@ void grep(int argc, char **argv) {
 		/* argv[0] = "grep";  first argument is command name.
 		 * Currently set to "digenv".
 		 */
-		IS_GREP = 0; /* true */
+		IS_GREP_PARENT = 0; /* true */
 		execvp("grep", argv);
 		perror("failed to execute grep");
 	}
