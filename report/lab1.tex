@@ -54,22 +54,32 @@
 
 
 \posttitle{\par\end{center}} % Remove space between author and title
-%----------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 %	TITLE SECTION
-%----------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 
 \begin{document}
 
 \section{Problembeskrivning}
 Laborationen går ut på att skriva ett litet program som hjälper en att ta reda
 på vilka environmentvariabler som är satta.
-Programmet ska använda sig av systemkommandona |printenv|, |grep|, |sort|
-och |less|.
+Programmet ska köras genom att användaren skriver:
+\\
+|digenv| \emph{parametrar}
+\\
+Programmet ska internt använda sig av systemkommandona |printenv|, |grep|,
+|sort| och |less|.
 Med hjälp av nya processer och pipes ska dessa kommmandon kopplas ihop
 så att de motsvarar något av:
 \\
 |printenv |\textbar| sort |\textbar| less| \\ eller \\
-|printenv |\textbar| grep | \emph{parametrar} | sort |\textbar| less | \\
+|printenv |\textbar| grep | \emph{parametrar} \textbar | sort |\textbar| less |
+\\
+Om inga argument ges ska det första alternativet köras, om argument ges ska
+de skickas till grep.
+Vilken pager som används för att visa resultaten bestäms av
+environment-variabeln PAGER, om den är definierad.
+Om den inte är definierad kommer |less| att användas som basfall.
 
 
 \section{Förberedelsefrågor}
