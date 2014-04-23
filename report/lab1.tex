@@ -236,16 +236,17 @@ Se appendix för exempelkörning.\\
 % Detta är bara lite notes.
 Programmet kör sina processer med hjälp av en array av funktionspekare. Denna
 array innehåller de funktioner som ska köras av child-processer.
+
 En create\_child-funktion stegar sedan igenom denna array rekursivt så att
 process-strukturen blir P1-->P2-->P3-->P4. Denna design gör att det är enkelt
 att sätta in nya processer i pipen, särskilt om dessa inte ska ta emot några
-argument skilda från grep-argumenten. % nåt sånt-ish...
+argument skilda från grep-argumenten.\\ % nåt sånt-ish...
 
 Om någon av dessa processer får en nollskild exit status returneras denna även
 av dess parent. Med andra ord kommer P1 att få tillbaka en error om någon av
 barnprocesserna returnerar error. Detta innebär att man måste specialhantera
 grep-exit codes, om man vill hantera dessa, eftersom grep returnerar 1 om inga
-rader matchas. % ska vi skriva sånt här?
+rader matchas.\\ % ska vi skriva sånt här?
 
 Programmet är skrivet så att fyra processer alltid körs. Om grep inte får
 några argument ersätts den av en "pipethrough" som skriver stdin till stdout.
