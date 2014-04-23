@@ -106,32 +106,6 @@ Ni nämner att |//|-kommentarer inte fungerar i C. De flesta moderna C-kompilato
 Ni hänvisar till filen CDOK som innehåller information om kommentarer i C. Filen ligger inte på kurshemsidan (KTH Social). Vi hittade den istället på den gamla kurshemsidan. Denna är dessutom väldigt heltäckande, vilket är bra generellt, men det skulle vara skönt att ha någon kort sammanfattning av denna som tar med det som är relevant för labben.
 
 
-
-
-
-
-\section{Problembeskrivning}
-Laborationen går ut på att skriva ett litet program som hjälper en att ta reda
-på vilka environmentvariabler som är satta.
-Programmet ska köras genom att användaren skriver:
-\\
-|digenv| \emph{parametrar}
-\\
-Programmet ska internt använda sig av systemkommandona |printenv|, |grep|,
-|sort| och |less|.
-Med hjälp av nya processer och pipes ska dessa kommmandon kopplas ihop
-så att de motsvarar något av:
-\\
-|printenv |\textbar| sort |\textbar| less| \\ eller \\
-|printenv |\textbar| grep | \emph{parametrar} \textbar | sort |\textbar| less |
-\\
-Om inga argument ges ska det första alternativet köras, om argument ges ska
-de skickas till grep.
-Vilken pager som används för att visa resultaten bestäms av
-environment-variabeln PAGER, om den är definierad.
-Om den inte är definierad kommer |less| att användas som basfall.
-
-
 \section{Förberedelsefrågor}
 \begin{enumerate}[1)]
 \item \emph{När en maskin bootar med UNIX skapas en process som har PID=1 och
@@ -226,7 +200,31 @@ Man kan alltså kontrollera "signal"-variabeln efter |wait|.
 
 \end{enumerate}
 
+\section{Problembeskrivning}
+Laborationen går ut på att skriva ett litet program som hjälper en att ta reda
+på vilka environmentvariabler som är satta.
+Programmet ska köras genom att användaren skriver:
+\\
+|digenv| \emph{parametrar}
+\\
+Programmet ska internt använda sig av systemkommandona |printenv|, |grep|,
+|sort| och |less|.
+Med hjälp av nya processer och pipes ska dessa kommmandon kopplas ihop
+så att de motsvarar något av:
+\\
+|printenv |\textbar| sort |\textbar| less| \\ eller \\
+|printenv |\textbar| grep | \emph{parametrar} \textbar | sort |\textbar| less |
+\\
+Om inga argument ges ska det första alternativet köras, om argument ges ska
+de skickas till grep.
+Vilken pager som används för att visa resultaten bestäms av
+environment-variabeln PAGER, om den är definierad.
+Om den inte är definierad kommer |less| att användas som basfall.
+
+
 \section{Programbeskrivning}
+
+Se appendix för exempelkörning.\\
 
 %'' Beskriv hur du valt att lösa uppgiften, speciellt val av datastrukturer och
 %programstrukturen på den kod du har skrivit. Motivera också i berörda fall
