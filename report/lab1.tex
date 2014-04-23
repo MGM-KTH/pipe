@@ -88,9 +88,25 @@ Koden finns tillgänglig i katalogen |/afs/nada.kth.se/home/6/u1q11n66/os/lab1|.
 
 % Uppskattning av tidsåtgång och eventuella kommentarer kring laborationen
 \subsection{Verksamhetsberättelse}
+Det största problemet var val av programstruktur. 
+Det finns flera olika bra sätt att genomföra laborationen på och att välja ett smidigt tillvägagångssätt redan från början visade sig vara svårt. Vårt slutgiltiga designval visade sig dessutom vara bristfälligt när det kommer till process-specific felhantering. I övrigt gick arbetet bra. Hantering av pipes gick smidigt. Vi hade ett problem där exit-status från children via wait gav oväntade värden. Detta löstes med macrot |WEXITSTATUS| (från |sys/wait.h|).
 
 
 \subsection{Synpunkter}
+PDFen ''Användbara systemanrop och biblioteksfunktioner'' är väldigt välskriven och hjälpte väldigt mycket.
+Labben gick snabbare än väntat, totalt cirka 10 timmar. Dock har vi båda viss C-vana.\\
+
+Det största problemet var den stora förvirringen kring krav och instruktioner. 
+Till att börja med finns det rapportinstruktioner på två ställen, i labPM samt labbspecifika instruktioner i labbpeket. 
+Det skulle vara skönt att ha en heltäckande checklista i labbpeket istället. \\
+
+Labbpeket säger att man ska ta bort filer med |unlink|. Gäller detta fortfarande? Vi brukar använda |rm|.\\
+Ni nämner att |//|-kommentarer inte fungerar i C. De flesta moderna C-kompilatorer tillåter dessa (C99). Vi vet att all kod ska skrivas i ANSI-C, men detta borde kanske förtydligas i labbpeket. Man borde dessutom kanske lägga till någon ANSI-flagga i kompileringen också, t.ex. |-std=C90| eller |-ansi|.\\
+
+Ni hänvisar till filen CDOK som innehåller information om kommentarer i C. Filen ligger inte på kurshemsidan (KTH Social). Vi hittade den istället på den gamla kurshemsidan. Denna är dessutom väldigt heltäckande, vilket är bra generellt, men det skulle vara skönt att ha någon kort sammanfattning av denna som tar med det som är relevant för labben.
+
+
+
 
 
 
@@ -212,12 +228,12 @@ Man kan alltså kontrollera "signal"-variabeln efter |wait|.
 
 \section{Programbeskrivning}
 
-'' Beskriv hur du valt att lösa uppgiften, speciellt val av datastrukturer och
-programstrukturen på den kod du har skrivit. Motivera också i berörda fall
-varför du har valt att lösa uppgiften på detta sätt. Inkludera en beskrivning
-av de funktioner du skrivit med respektive resultat- och argumentparametrar.
-Beskriv också om och hur du kan ändra beteendet, t. ex. byta ingående
-algoritmer, i ditt program.''
+%'' Beskriv hur du valt att lösa uppgiften, speciellt val av datastrukturer och
+%programstrukturen på den kod du har skrivit. Motivera också i berörda fall
+%varför du har valt att lösa uppgiften på detta sätt. Inkludera en beskrivning
+%av de funktioner du skrivit med respektive resultat- och argumentparametrar.
+%Beskriv också om och hur du kan ändra beteendet, t. ex. byta ingående
+%algoritmer, i ditt program.''
 
 % Detta är bara lite notes.
 Programmet kör sina processer med hjälp av en array av funktionspekare. Denna
