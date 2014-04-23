@@ -180,7 +180,12 @@ int create_child(
 		waitpid(child_pid, &status, 0); /* 0: No options */
 	    if (IS_GREP_PARENT && WEXITSTATUS(status) == 1) /* no lines were selected by grep */
 		    return GREP_NO_MATCH;
-		return WEXITSTATUS(status);
+		if (WIFEXITED(status)) {
+			return WEXITSTATUS(status);
+		}
+		else {
+			return status;
+		}
 	}
 }
 
