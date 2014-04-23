@@ -30,6 +30,9 @@
 \usepackage{enumerate}
 \usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
 
+\usepackage{hyperref}
+\usepackage{url}
+
 \usepackage{sectsty} % Allows customizing section commands
 \allsectionsfont{\normalfont} % Make all sections centered, the default font and small caps
 
@@ -54,11 +57,24 @@
 
 
 \posttitle{\par\end{center}} % Remove space between author and title
-%------------------------------------------------------------------------------
-%	TITLE SECTION
-%------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------
+% TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{ 
+\huge Project 1 - Factoring \\ % The assignment title
+\vspace{10pt}
+\normalfont \normalsize 
+\textsc{DD2440 - Advanced algorithms } \\ [25pt] %
+}
+
+\author{Gustaf Lindstedt \\ glindste@kth.se \\ 910301-2135 \and Martin Runelöv \\ mrunelov@kth.se \\ 900330-5738}
+
+\date{\vspace{8pt}\normalsize\today} % Today's date or a custom date
 
 \begin{document}
+
+\maketitle
 
 \section{Problembeskrivning}
 Laborationen går ut på att skriva ett litet program som hjälper en att ta reda
@@ -181,7 +197,7 @@ Man kan alltså kontrollera "signal"-variabeln efter |wait|.
 '' Beskriv hur du valt att lösa uppgiften, speciellt val av datastrukturer och programstrukturen på den kod du har skrivit. Motivera också i berörda fall varför du har valt att lösa uppgiften på detta sätt. Inkludera en beskrivning av de funktioner du skrivit med respektive resultat- och argumentparametrar. Beskriv också om och hur du kan ändra beteendet, t. ex. byta ingående algoritmer, i ditt program.''
 
 % Detta är bara lite notes.
-Programmet kör sina processer med hjälp av en array av funktionspekare. Denna array innehåller de funktioner som ska köras av child-processer. En create_child-funktion stegar sedan igenom denna array rekursivt så att process-strukturen blir P1-->P2-->P3-->P4. Denna design gör att det är enkelt att sätta in nya processer i pipen, särskilt om dessa inte ska ta emot några argument skilda från grep-argumenten. % nåt sånt-ish...
+Programmet kör sina processer med hjälp av en array av funktionspekare. Denna array innehåller de funktioner som ska köras av child-processer. En create\_child-funktion stegar sedan igenom denna array rekursivt så att process-strukturen blir P1-->P2-->P3-->P4. Denna design gör att det är enkelt att sätta in nya processer i pipen, särskilt om dessa inte ska ta emot några argument skilda från grep-argumenten. % nåt sånt-ish...
 
 Om någon av dessa processer får en nollskild exit status returneras denna även av dess parent. 
 Med andra ord kommer P1 att få tillbaka en error om någon av barnprocesserna returnerar error. 
