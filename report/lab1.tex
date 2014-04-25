@@ -234,24 +234,35 @@ Se appendix för exempelkörning.\\
 %algoritmer, i ditt program.''
 
 % Detta är bara lite notes.
-Programmet kör sina processer med hjälp av en array av funktionspekare. Denna
-array innehåller de funktioner som ska köras av child-processer.
+Alla kommandon som ska köras har fått wrapperfunktioner som exekverar kommandot
+i den nuvarande tråden.
+Programmet kör sedan sina kommandon i barnprocesser med hjälp av en array av
+funktionspekare till dessa wrapperfunktioner.
+\\
 
-En create\_child-funktion stegar sedan igenom denna array rekursivt så att
-process-strukturen blir P1-->P2-->P3-->P4. Denna design gör att det är enkelt
-att sätta in nya processer i pipen, särskilt om dessa inte ska ta emot några
-argument skilda från grep-argumenten.\\ % nåt sånt-ish...
+Funktionen create\_child stegar igenom denna array rekursivt och exekverar
+funktionerna i baklänges ordning, så att den process som skapas först dör sist
+(FILO). Process-strukturen blir alltså |less|-->|sort|-->|grep|-->|printenv|,
+där varje process väntar på att sitt barn ska avlsuta med |waitpid()| innan
+kommandot exekveras. Denna design gör att det är enkelt att sätta in nya
+processer i pipen, särskilt om dessa inte ska ta emot några argument skilda
+från grep-argumenten.
+\\ % nåt sånt-ish...
 
 Om någon av dessa processer får en nollskild exit status returneras denna även
-av dess parent. Med andra ord kommer P1 att få tillbaka en error om någon av
-barnprocesserna returnerar error. Detta innebär att man måste specialhantera
-grep-exit codes, om man vill hantera dessa, eftersom grep returnerar 1 om inga
-rader matchas.\\ % ska vi skriva sånt här?
+av dess parent. Med andra ord kommer processen som skulle köra |less| att få
+tillbaka en error om någon av barnprocesserna returnerar error.
+Detta innebär att man måste specialhantera greps exit-kod om man vill berätta
+för användaren att inga matchningar hittades, eftersom grep signalerar detta
+genom att returnera exit-koden 1.
+\\ % ska vi skriva sånt här?
 
 Programmet är skrivet så att fyra processer alltid körs. Om grep inte får
-några argument ersätts den av en "pipethrough" som skriver stdin till stdout.
+några argument ersätts den av en funktion som kallas "pipethrough" som i stort
+sett emulerar kommandot |cat| genom att skriva från stdin till stdout.
 Detta är inte nödvändigt, men det är utformat så för att enkelt kunna utöka
-detta steg med mer funktionalitet.
+detta steg med mer funktionalitet och dynamiskt hantera om ett kommando inte
+ska köras (som |grep| i vissa fall).
 
 
 \newpage
