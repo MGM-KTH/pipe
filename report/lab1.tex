@@ -79,7 +79,8 @@
 \section{Inledning}
 
 % OBS! Se till så att filerna är läsbara för assistenterna (se 3.4 ).
-Koden finns tillgänglig i katalogen |/afs/ict.kth.se/home/m/r/mrunelov/os/lab1|.\\
+Koden finns tillgänglig i följande sökväg:\\
+|/afs/ict.kth.se/home/m/r/mrunelov/os/lab1/digenv.c|.\\
 
 
 % Verksamhetsberättelse och synpunkter på laborationen. Beskriv arbetets utveckling. Hade du problem med verktygen,
@@ -89,7 +90,7 @@ Koden finns tillgänglig i katalogen |/afs/ict.kth.se/home/m/r/mrunelov/os/lab1|
 % Uppskattning av tidsåtgång och eventuella kommentarer kring laborationen
 \subsection{Verksamhetsberättelse}
 Det största problemet var val av programstruktur. 
-Det finns flera olika bra sätt att genomföra laborationen på och att välja ett smidigt tillvägagångssätt redan från början visade sig vara svårt. Vårt slutgiltiga designval visade sig dessutom vara bristfälligt när det kommer till process-specific felhantering. I övrigt gick arbetet bra. Hantering av pipes gick smidigt. Vi hade ett problem där exit-status från children via wait gav oväntade värden. Detta löstes med macrot |WEXITSTATUS| (från |sys/wait.h|).
+Det finns flera olika bra sätt att genomföra laborationen på och att välja ett smidigt tillvägagångssätt redan från början visade sig vara svårt. Vårt slutgiltiga designval visade sig dessutom vara bristfälligt när det kommer till process-specific felhantering. I övrigt gick arbetet bra. Hantering av pipes gick smidigt. Vi hade ett problem där exit-status från children via wait gav oväntade värden. Detta löstes med macrot |WEXITSTATUS| (från |sys/wait.h|). \\
 
 
 \subsection{Synpunkter}
